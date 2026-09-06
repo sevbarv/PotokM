@@ -1,6 +1,8 @@
-# Potok HR Agent Mood
+# Potok HR Agent
 
-ИИ-агент для HR на основе открытого API «Потока». Отслеживание настроений кандидатов и сотрудников с AI-анализом заметок, цветовыми зонами и рекомендациями для рекрутеров или, в дальнейшем, менеджеров по адаптации и удержанию персонала.
+**ИИ-агент для HR на основе открытого API «Потока»**
+
+Отслеживание настроений кандидатов и сотрудников с AI-анализом заметок, цветовыми зонами и рекомендациями для рекрутеров.
 
 ## Описание продукта
 
@@ -15,7 +17,7 @@ HR-агент решает реальную HR-задачу: автоматиз�
   - 🟠 оранжевая — есть сомнения в заметке
   - 🔴 красная — более двух подозрительных слов
   - Для каждой заметки генерируется рекомендация для HR
-- **Уведомления рекрутеру** — раз в день (в 09:30) анализ всех заметок за месяц и отправка сводки по кандидатам и сотрудникам, определённым в оранжевую и красную зону
+- **Уведомления рекрутеру** — раз в день (в 09:00) анализ всех заметок за месяц и отправка сводки по кандидатам и сотрудникам, определённым в оранжевую и красную зону
 - **Интеграция с «Потоком»** — синхронизация данных через открытое API v3:
   - Добавление заметок к кандидатам
   - Создание уведомлений по сотрудникам
@@ -55,39 +57,53 @@ HR-агент решает реальную HR-задачу: автоматиз�
 ```bash
 git clone <repo-url>
 cd potok-hr-agent
+```
 
-### 2. Создайте .env
+### 2. Создайте `.env`
+```bash
 cp .env.example .env
+```
 Заполните переменные:
+- `BOT_TOKEN` — токен Telegram бота
+- `POTOK_API_TOKEN` — токен открытого API «Потока»
+- `AI_API_KEY` — ключ LLM (OpenRouter/другой OpenAI-совместимый)
 
-BOT_TOKEN — токен Telegram бота
-POTOK_API_TOKEN — токен открытого API «Потока»
-AI_API_KEY — ключ LLM (OpenRouter/другой OpenAI-совместимый)
 ### 3. Запустите через Docker
+```bash
 docker-compose up --build
+```
+
 ### 4. Или локально
+```bash
 python -m venv venv
 source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 python main.py
+```
 
-### Структура проекта
-bot.py — точка входа
-main.py — инициализация БД и запуск polling
-config/settings.py — конфигурация через pydantic-settings
-database/ — SQLAlchemy асинхронные модели (User, MoodLog, Notification)
-potok_api/client.py — клиент открытого API «Потока» v3
-ai_client/analyzer.py — клиент LLM для анализа заметок
-handlers/ — обработчики aiogram 3 (start, mood, candidate, employee, recruiter)
-services/ — бизнес-логика (mood_service, ai_service, potok_sync, scheduler_tasks)
-scheduler/setup.py — планировщик APScheduler
-utils/zones.py — логика цветовых зон и стоп-слов
-API «Потока»
+## Структура проекта
 
-### Проект использует открытое API «Потока» v3:
+- `bot.py` — точка входа
+- `main.py` — инициализация БД и запуск polling
+- `config/settings.py` — конфигурация через pydantic-settings
+- `database/` — SQLAlchemy асинхронные модели (`User`, `MoodLog`, `Notification`)
+- `potok_api/client.py` — клиент открытого API «Потока» v3
+- `ai_client/analyzer.py` — клиент LLM для анализа заметок
+- `handlers/` — обработчики aiogram 3 (`start`, `mood`, `candidate`, `employee`, `recruiter`)
+- `services/` — бизнес-логика (`mood_service`, `ai_service`, `potok_sync`, `scheduler_tasks`)
+- `scheduler/setup.py` — планировщик APScheduler
+- `utils/zones.py` — логика цветовых зон и стоп-слов
 
-GET /applicants.json — получение списка кандидатов
-GET /jobs.json — получение вакансий
-POST /applicants/{id}/notes.json — добавление заметки к кандидату
-POST /notifications.json — создание уведомления для сотрудника
-Токен для доступа хранится в переменной окружения POTOK_API_TOKEN. Для работы с песочницей конкурса при необходимости измените POTOK_API_BASE_URL.
+## API «Потока»
+
+Проект использует открытое API «Потока» v3:
+- `GET /applicants.json` — получение списка кандидатов
+- `GET /jobs.json` — получение вакансий
+- `POST /applicants/{id}/notes.json` — добавление заметки к кандидату
+- `POST /notifications.json` — создание уведомления для сотрудника
+
+Токен для доступа хранится в переменной окружения `POTOK_API_TOKEN`. Для работы с песочницей конкурса при необходимости измените `POTOK_API_BASE_URL`.
+
+## Лицензия
+
+MIT

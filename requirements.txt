@@ -1,0 +1,12 @@
+aiogram==3.*
+SQLAlchemy==2.*
+aiosqlite
+asyncpg
+python-dotenv
+loguru
+pydantic
+pydantic-settings
+apscheduler==3.10.4
+pytz
+aiohttp
+httpx
