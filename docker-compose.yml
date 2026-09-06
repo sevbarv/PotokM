@@ -1,0 +1,32 @@
+version: "3.8"
+
+services:
+  bot:
+    build: .
+    container_name: potok_hr_agent
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://hr_agent:hr_agent_pass@db:5432/hr_agent
+    volumes:
+      - ./data:/app/data
+    depends_on:
+      - db
+    command: python main.py
+
+  db:
+    image: postgres:15
+    container_name: potok_hr_agent_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: hr_agent
+      POSTGRES_USER: hr_agent
+      POSTGRES_PASSWORD: hr_agent_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
